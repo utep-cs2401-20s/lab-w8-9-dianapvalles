@@ -14,7 +14,10 @@ class AminoAcidLL{
    * pair and increments the codon counter for that codon.
    * NOTE: Does not check for repeats!! */
   AminoAcidLL(String inCodon){
-  
+   this.aminoAcid = AminoAcidResources.getAminoAcidFromCodon(inCodon);
+   this.codons = AminoAcidResources.getCodonListForAminoAcid(this.aminoAcid);
+   this.counts = new int[codons.length];
+   this.next = null;
   }
 
   /********************************************************************************************/
@@ -24,7 +27,6 @@ class AminoAcidLL{
    * If there is no next node, add a new node to the list that would contain the codon. 
    */
   private void addCodon(String inCodon){
-  
   }
 
 
