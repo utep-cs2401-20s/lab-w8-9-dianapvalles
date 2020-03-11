@@ -1,6 +1,5 @@
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.concurrent.TimeUnit;
-
 import org.junit.jupiter.api.Test;
 
 class AminoAcidResourcesTester{
@@ -59,4 +58,12 @@ class AminoAcidResourcesTester{
     }
   }
 
+  public static void main(String[] args) {
+    char[] rna = {'A','C','U','G'};
+    AminoAcidLL newNode = new AminoAcidLL("CCG");
+    AminoAcidLL newNode2 = new AminoAcidLL("UUG");
+
+    newNode.aminoAcidExists("CCG");
+
+  }
 }
