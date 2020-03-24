@@ -59,11 +59,10 @@ class AminoAcidResourcesTester{
   }
 
   public static void main(String[] args) {
-    char[] rna = {'A','C','U','G'};
-    AminoAcidLL newNode = new AminoAcidLL("CCG");
-    AminoAcidLL newNode2 = new AminoAcidLL("UUG");
+    AminoAcidLL head = null;
 
-    newNode.aminoAcidExists("CCG");
+    System.out.println("EXPECTED: A T E L R S");
+    head = AminoAcidLL.createFromRNASequence("GCUACGGAGCUUCGGAGCGCAUAG");
 
   }
 }

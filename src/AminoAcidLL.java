@@ -5,7 +5,6 @@ class AminoAcidLL{
   AminoAcidLL next;
 
   AminoAcidLL(){
-
   }
 
   /********************************************************************************************/
@@ -16,6 +15,7 @@ class AminoAcidLL{
    this.aminoAcid = AminoAcidResources.getAminoAcidFromCodon(inCodon);
    this.codons = AminoAcidResources.getCodonListForAminoAcid(this.aminoAcid);
    this.counts = new int[codons.length];
+   incrementCount(inCodon);
    this.next = null;
   }
 
@@ -26,14 +26,9 @@ class AminoAcidLL{
    * If there is no next node, add a new node to the list that would contain the codon. 
    */
   private void addCodon(String inCodon){
-
-//    if(next == null){
-//      this.next = new AminoAcidLL(inCodon);
-//      return;
-//    }
-
     if(aminoAcid == AminoAcidResources.getAminoAcidFromCodon(inCodon)) {
-      aminoAcidExists(inCodon);
+      incrementCount(inCodon);
+      return;
     }
     else if (next != null){
       next.addCodon(inCodon);
@@ -42,26 +37,22 @@ class AminoAcidLL{
       this.next = new AminoAcidLL(inCodon);
       return;
     }
-
   }
 
   /********************************************************************************************/
-  /* Helper method for addCodon */
-  public void aminoAcidExists(String inCodon){
-    for(int i = 0; i < codons.length; i++){
-      System.out.println("CODONS COMPARED = " + codons[i] + "vs" + inCodon);
-      if(codons[i].equals(inCodon)){
-        counts[i]++;
-
-            for(int j = 0; j < counts.length; j++){
-              System.out.println(counts[j] + " ");
-            }
-
+  /* Helper method to increment counts array */
+  private void incrementCount(String inCodon){
+    for(int i = 0; i < this.codons.length; i++){
+//      System.out.println("CODONS COMPARED = " + this.codons[i] + "vs" + inCodon);
+      if(this.codons[i].equals(inCodon)){
+        this.counts[i]++;
+//            for(int j = 0; j < this.counts.length; j++){
+//              System.out.println(this.counts[j] + " ");
+//            }
+            break;
       }
     }
-
   }
-
 
   /********************************************************************************************/
   /* Shortcut to find the total number of instances of this amino acid */
@@ -80,7 +71,6 @@ class AminoAcidLL{
   private int totalDiff(AminoAcidLL inList){
     return Math.abs(totalCount() - inList.totalCount());
   }
-
 
   /********************************************************************************************/
   /* helper method for finding the list difference on two matching nodes
@@ -113,6 +103,7 @@ class AminoAcidLL{
   /********************************************************************************************/
   /* Recursively returns the total list of amino acids in the order that they are in in the linked list. */
   public char[] aminoAcidList(){
+
     return new char[]{};
   }
 
@@ -133,7 +124,31 @@ class AminoAcidLL{
   /********************************************************************************************/
   /* Static method for generating a linked list from an RNA sequence */
   public static AminoAcidLL createFromRNASequence(String inSequence){
-    return null;
+    AminoAcidLL head = null;
+
+    for(int i = 0; i < inSequence.length(); i++){
+     if(i == 0){
+       head = new AminoAcidLL(inSequence.substring(0,3));
+       inSequence = inSequence.substring(3);
+     }
+     else{
+       head.addCodon(inSequence.substring(0,3));
+       inSequence = inSequence.substring(3);
+       i=1;
+     }
+    }
+
+    AminoAcidLL temp = head;
+    while(temp != null){
+      System.out.println(temp.aminoAcid);
+
+        System.out.println(temp.totalCount());
+
+      System.out.println("******************************************");
+
+      temp = temp.next;
+    }
+    return head;
   }
 
 
