@@ -61,8 +61,10 @@ class AminoAcidResourcesTester{
   public static void main(String[] args) {
     AminoAcidLL head = null;
 
-    System.out.println("EXPECTED: A T E L R S");
+    System.out.println("EXPECTED: A T E L R S *");
     head = AminoAcidLL.createFromRNASequence("GCUACGGAGCUUCGGAGCGCAUAG");
+
+    System.out.println(head.isSorted());
 
   }
 }
