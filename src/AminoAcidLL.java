@@ -86,6 +86,11 @@ class AminoAcidLL {
    * the list *must* be sorted to use this method */
   public int aminoAcidCompare(AminoAcidLL inList) {
 
+    if(next == null){
+      return 0;
+    }
+
+
     return Math.abs(inList.totalCount());
   }
 
@@ -101,21 +106,46 @@ class AminoAcidLL {
   /********************************************************************************************/
   /* Recursively returns the total list of amino acids in the order that they are in in the linked list. */
   public char[] aminoAcidList() {
-    char[] aminoAcidList = new char[]{};
 
     if (next == null) {
-      return null;
-    } else {
-
+      return new char[]{aminoAcid};
     }
-    return new char[]{};
+
+    char[] temp = next.aminoAcidList();
+    char[] ret = new char[temp.length+1];
+
+    ret[0] = aminoAcid;
+    for(int i = 0; i < temp.length; i++){
+      ret[i+1] = temp[i];
+    }
+
+    return ret;
   }
 
   /********************************************************************************************/
   /* Recursively returns the total counts of amino acids in the order that they are in in the linked list. */
   public int[] aminoAcidCounts() {
 
-    return new int[]{};
+   if(next == null){
+      return new int[]{this.totalCount()};
+   }
+
+   int[] temp = next.aminoAcidCounts();
+   int[] ret = new int[temp.length+1];
+
+   ret[0] = totalCount();
+
+   for(int i = 0; i < temp.length; i++){
+      ret[i+1] = temp[i];
+   }
+   
+    return ret;
+  }
+
+  public static void printInt(int[] aminoAcidCounts){
+    for(int i = 0; i < aminoAcidCounts.length; i++){
+      System.out.print(aminoAcidCounts[i] + " ");
+    }
   }
 
   /********************************************************************************************/
@@ -148,16 +178,6 @@ class AminoAcidLL {
       }
     }
 
-    AminoAcidLL temp = head;
-    while (temp != null) {
-      System.out.println(temp.aminoAcid);
-
-      System.out.println(temp.totalCount());
-
-      System.out.println("******************************************");
-
-      temp = temp.next;
-    }
     return head;
   }
 
@@ -165,32 +185,23 @@ class AminoAcidLL {
   /********************************************************************************************/
   /* sorts a list by amino acid character*/
   public static AminoAcidLL sort(AminoAcidLL inList) {
-    AminoAcidLL beforeCurrent = inList;
-    AminoAcidLL curNode = inList.next;
-    AminoAcidLL next;
-    AminoAcidLL position;
-
-    while(curNode != null){
-      next = curNode.next;
-      position = findInsertion(curNode.aminoAcid, inList);
-
-      if(position == beforeCurrent){
-        beforeCurrent = curNode;
-      }
-
-    }
-
     return null;
   }
 
-  public static AminoAcidLL findInsertion(char aminoAcid, AminoAcidLL inList){
-    AminoAcidLL curNodeA = null;
-    AminoAcidLL curNodeB = inList;
+//  public static AminoAcidLL merge(AminoAcidLL left, AminoAcidLL right){
+//
+//  }
 
-    while(curNodeB != null && aminoAcid > curNodeB.aminoAcid){
-      curNodeA = curNodeB;
-      curNodeB = curNodeB.next;
+  public static void printLinkedList(AminoAcidLL head){
+    AminoAcidLL temp = head;
+
+    System.out.println("Current order of linked list");
+
+    while(temp != null){
+      System.out.print(temp.aminoAcid + " ");
+      temp = temp.next;
     }
-    return curNodeA;
-  }
+
+    System.out.println();
+    }
 }

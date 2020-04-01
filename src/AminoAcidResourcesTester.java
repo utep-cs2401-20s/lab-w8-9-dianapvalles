@@ -58,13 +58,22 @@ class AminoAcidResourcesTester{
     }
   }
 
-  public static void main(String[] args) {
-    AminoAcidLL head = null;
+  @Test
+  public void sequence1(){
+    AminoAcidLL head = AminoAcidLL.createFromRNASequence("GCUACGGAGCUUCGGAGCGCA");
+    //ACGGAGCUUCGGAGCGCA
+    head.printLinkedList(head);
 
-    System.out.println("EXPECTED: A T E L R S *");
-    head = AminoAcidLL.createFromRNASequence("GCUACGGAGCUUCGGAGCGCAUAG");
+    char[] aminoAcids = head.aminoAcidList();
+    char[] aminoAcidChar = {'A','T','E','L','R','S'};
 
-    System.out.println(head.isSorted());
+    head.printArray(aminoAcids);
+    head.printInt(head.aminoAcidCounts());
+
+    assertArrayEquals(aminoAcidChar, aminoAcids);
+
 
   }
+
+
 }
