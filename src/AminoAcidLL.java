@@ -12,10 +12,15 @@ class AminoAcidLL {
    * pair and increments the codon counter for that codon.
    * NOTE: Does not check for repeats!! */
   AminoAcidLL(String inCodon) {
+    //method call to get the amino acid character of an specific codon
     this.aminoAcid = AminoAcidResources.getAminoAcidFromCodon(inCodon);
+    //method call to get the possible codons [array] of the amino acid
     this.codons = AminoAcidResources.getCodonListForAminoAcid(this.aminoAcid);
+    //initializes the counts for each codon
     this.counts = new int[codons.length];
+    //increments the count for the codon passed in the constructor
     incrementCount(inCodon);
+    //creates the next link of the linked list [set to null]
     this.next = null;
   }
 
@@ -26,27 +31,29 @@ class AminoAcidLL {
    * If there is no next node, add a new node to the list that would contain the codon.
    */
   private void addCodon(String inCodon) {
+    //compares the current amino acid with the amino acid that results from the codon passed
+    //if it is the same, then it increments the count and does not create another node
     if (aminoAcid == AminoAcidResources.getAminoAcidFromCodon(inCodon)) {
       incrementCount(inCodon);
       return;
-    } else if (next != null) {
+    }
+    //the comparison did not pass and there are other nodes (amino acids), then we move to the next node to check it [recursive call]
+    else if (next != null) {
       next.addCodon(inCodon);
-    } else {
+    }
+    //we reached the end and never found match, we create a new node
+    else {
       this.next = new AminoAcidLL(inCodon);
       return;
     }
   }
 
   /********************************************************************************************/
-  /* Helper method to increment counts array */
+  /* Helper method that increments the count of the codon usage */
   private void incrementCount(String inCodon) {
     for (int i = 0; i < this.codons.length; i++) {
-//      System.out.println("CODONS COMPARED = " + this.codons[i] + "vs" + inCodon);
       if (this.codons[i].equals(inCodon)) {
         this.counts[i]++;
-//            for(int j = 0; j < this.counts.length; j++){
-//              System.out.println(this.counts[j] + " ");
-//            }
         break;
       }
     }
@@ -57,6 +64,7 @@ class AminoAcidLL {
   private int totalCount() {
     int sum = 0;
 
+    //iterates through the array to get each of the codons count
     for (int i = 0; i < counts.length; i++) {
       sum += counts[i];
     }
@@ -86,11 +94,31 @@ class AminoAcidLL {
    * the list *must* be sorted to use this method */
   public int aminoAcidCompare(AminoAcidLL inList) {
 
-    if(next == null){
-      return 0;
+//    if(!inList.isSorted()){
+//      sort(inList);
+//    }
+
+
+//    if(inList == null){
+//      int temp = this.totalCount();
+//      return this.aminoAcidCompare(this.next);
+//    }
+
+    //  if(this == null){
+//      int a = this.aminoAcidCompare(inList.next);
+//    }
+
+    //aminoAcids matched
+    if(this.aminoAcid == inList.aminoAcid){
+      return this.totalDiff(inList) + this.next.aminoAcidCompare(inList.next);
     }
 
+    //aminoAcids doesn't match
+    if(this.aminoAcid < inList.aminoAcid){
+      return this.totalCount() + this.next.aminoAcidCompare(inList);
+    }
 
+    //inList has an aminoacid that "this" doesn't
     return Math.abs(inList.totalCount());
   }
 
@@ -99,7 +127,17 @@ class AminoAcidLL {
    * Must be sorted. */
   public int codonCompare(AminoAcidLL inList) {
 
-    return 0;
+    if(this.aminoAcid == inList.aminoAcid){
+      return this.codonDiff(inList) + this.next.aminoAcidCompare(inList.next);
+    }
+
+    //aminoAcids doesn't match
+    if(this.aminoAcid < inList.aminoAcid){
+      return this.totalCount() + this.next.aminoAcidCompare(inList);
+    }
+
+    //inList has an aminoacid that "this" doesn't
+    return Math.abs(inList.totalCount());
   }
 
 
@@ -138,7 +176,7 @@ class AminoAcidLL {
    for(int i = 0; i < temp.length; i++){
       ret[i+1] = temp[i];
    }
-   
+
     return ret;
   }
 
@@ -168,10 +206,15 @@ class AminoAcidLL {
     AminoAcidLL head = null;
 
     for (int i = 0; i < inSequence.length(); i++) {
+      if(AminoAcidResources.getAminoAcidFromCodon(inSequence.substring(0,3)) == '*')
+        break;
       if (i == 0) {
         head = new AminoAcidLL(inSequence.substring(0, 3));
         inSequence = inSequence.substring(3);
-      } else {
+      }
+      else {
+        if(AminoAcidResources.getAminoAcidFromCodon(inSequence.substring(0,3)) == '*')
+          break;
         head.addCodon(inSequence.substring(0, 3));
         inSequence = inSequence.substring(3);
         i = 1;
@@ -184,14 +227,59 @@ class AminoAcidLL {
 
   /********************************************************************************************/
   /* sorts a list by amino acid character*/
+  //Uses insertion sort
   public static AminoAcidLL sort(AminoAcidLL inList) {
-    return null;
+    AminoAcidLL beforeCurrent = inList;
+    AminoAcidLL curNode = inList.next;
+    AminoAcidLL next;
+    AminoAcidLL position;
+
+    while(curNode != null){
+      next = curNode.next;
+      //method call to find the insertion position
+      position = findInsertion(curNode.aminoAcid, inList);
+
+      if(position == beforeCurrent){
+        beforeCurrent = curNode;
+      }
+      else {
+        beforeCurrent.next = null;
+
+        //prepends the node
+        if(position == null){
+          AminoAcidLL temp = inList;
+          inList = curNode;
+          curNode.next = temp;
+          beforeCurrent.next = next;
+        }
+        //inserts the node after "position"
+        else{
+          position.next = curNode;
+          curNode.next = beforeCurrent;
+          beforeCurrent.next = next;
+        }
+      }
+      //moves to the next node
+      curNode = next;
+    }
+    return inList;
   }
 
-//  public static AminoAcidLL merge(AminoAcidLL left, AminoAcidLL right){
-//
-//  }
+  /* helper method that searches the list from the head toward the current node to find the insertion position */
+    private static AminoAcidLL findInsertion(char aminoAcid, AminoAcidLL inList){
+    AminoAcidLL curNodeA = null;
+    AminoAcidLL curNodeB = inList;
 
+    while(curNodeB != null && aminoAcid > curNodeB.aminoAcid){
+      curNodeA = curNodeB;
+      curNodeB = curNodeB.next;
+    }
+    return curNodeA;
+  }
+
+
+  /********************************************************************************************/
+  /* helper method to print the array */
   public static void printLinkedList(AminoAcidLL head){
     AminoAcidLL temp = head;
 
