@@ -60,13 +60,36 @@ class AminoAcidResourcesTester{
 
   @Test
   public void sequence1(){
-    AminoAcidLL head = AminoAcidLL.createFromRNASequence("GCUACGGAGCUUCGGAGCUAG");
+    AminoAcidLL head1 = AminoAcidLL.sort(AminoAcidLL.createFromRNASequence("CCGUUCGCACUG"));
     //ACGGAGCUUCGGAGCGCA
 
-    AminoAcidLL sorted = AminoAcidLL.sort(head);
-    AminoAcidLL.printLinkedList(sorted);
+    int[] array = head1.aminoAcidCounts();
 
-    System.out.println(sorted.isSorted());
+    AminoAcidLL.printAminoAcidCounts(array);
+
+    AminoAcidLL head = AminoAcidLL.sort(AminoAcidLL.createFromRNASequence("UGGCCC"));
+
+
+
+    int[] array1 = head.aminoAcidCounts();
+
+    System.out.println("COUNTS HEAD1:");
+    for(int i = 0; i < array1.length; i++){
+      System.out.print(array1[i] + " ");
+    }
+    System.out.println();
+
+    AminoAcidLL.printLinkedList(head);
+    AminoAcidLL.printLinkedList(head1);
+
+    assertEquals(6, head.codonCompare(head1));
+
   }
 
+  @Test
+  public void sequence2() {
+    AminoAcidLL head = AminoAcidLL.createFromRNASequence("CCGAUGAAC");
+
+    assertEquals('P', head.aminoAcid);
+  }
 }

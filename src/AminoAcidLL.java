@@ -34,8 +34,7 @@ class AminoAcidLL {
     //compares the current amino acid with the amino acid that results from the codon passed
     //if it is the same, then it increments the count and does not create another node
     if (aminoAcid == AminoAcidResources.getAminoAcidFromCodon(inCodon)) {
-      incrementCount(inCodon);
-      return;
+      this.incrementCount(inCodon);
     }
     //the comparison did not pass and there are other nodes (amino acids), then we move to the next node to check it [recursive call]
     else if (next != null) {
@@ -44,7 +43,6 @@ class AminoAcidLL {
     //we reached the end and never found match, we create a new node
     else {
       this.next = new AminoAcidLL(inCodon);
-      return;
     }
   }
 
@@ -54,7 +52,6 @@ class AminoAcidLL {
     for (int i = 0; i < this.codons.length; i++) {
       if (this.codons[i].equals(inCodon)) {
         this.counts[i]++;
-        break;
       }
     }
   }
@@ -93,51 +90,82 @@ class AminoAcidLL {
   /* Recursive method that finds the differences in **Amino Acid** counts.
    * the list *must* be sorted to use this method */
   public int aminoAcidCompare(AminoAcidLL inList) {
+    //both lists are at the end
+    if(inList.next == null && this.next == null){
+      if(this.aminoAcid == inList.aminoAcid)
+        return this.totalDiff(inList);
 
-//    if(!inList.isSorted()){
-//      sort(inList);
-//    }
+      return inList.totalCount() + this.totalCount();
+    }
 
-
-//    if(inList == null){
-//      int temp = this.totalCount();
-//      return this.aminoAcidCompare(this.next);
-//    }
-
-    //  if(this == null){
-//      int a = this.aminoAcidCompare(inList.next);
-//    }
-
-    //aminoAcids matched
+    //both list have the same aminoacid
     if(this.aminoAcid == inList.aminoAcid){
+      //the next in "this" is null
+      if(this.next == null) {
+        return this.totalDiff(inList) + sum(inList.next);
+      }
+      //the next in inList is null
+      if(inList.next == null)
+        return this.totalDiff(inList) + sum(this.next);
+
+      //no next null values
       return this.totalDiff(inList) + this.next.aminoAcidCompare(inList.next);
     }
 
-    //aminoAcids doesn't match - this has an amino acid that inList doesn't have
-    if(this.aminoAcid < inList.aminoAcid){
+    //compares the characters
+    if(this.next != null && this.aminoAcid < inList.aminoAcid){
       return this.totalCount() + this.next.aminoAcidCompare(inList);
     }
 
-    //inList has an aminoacid that "this" doesn't
-    return inList.totalCount() + this.next.aminoAcidCompare(inList);
+    return inList.totalCount() + this.aminoAcidCompare(inList.next);
+  }
+
+  //helper method
+  public int sum(AminoAcidLL node){
+    AminoAcidLL temp = node;
+    int sum = 0;
+
+    while(temp  != null){
+      sum += temp.totalCount();
+      temp = temp.next;
+    }
+
+    System.out.println("SUM" + sum);
+    return sum;
   }
 
   /********************************************************************************************/
   /* Same as above, but counts the codon usage differences
    * Must be sorted. */
   public int codonCompare(AminoAcidLL inList) {
+    //both lists are at the end
+    if(inList.next == null && this.next == null){
+      if(this.aminoAcid == inList.aminoAcid)
+        return this.totalDiff(inList);
 
+      return inList.totalCount() + this.totalCount();
+    }
+
+    //both list have the same aminoacid
     if(this.aminoAcid == inList.aminoAcid){
-      return this.codonDiff(inList) + this.next.aminoAcidCompare(inList.next);
+      //the next in "this" is null
+      if(this.next == null) {
+        return this.codonDiff(inList) + sum(inList.next);
+      }
+      //the next in inList is null
+      if(inList.next == null)
+        return this.codonDiff(inList) + sum(this.next);
+
+      //no next null values
+      return this.codonDiff(inList) + this.next.codonCompare(inList.next);
     }
 
-    //aminoAcids doesn't match
-    if(this.aminoAcid < inList.aminoAcid){
-      return this.totalCount() + this.next.aminoAcidCompare(inList);
+    //compare the characters
+    if(this.next != null && this.aminoAcid < inList.aminoAcid){
+      return this.totalCount() + this.next.codonCompare(inList);
     }
 
-    //inList has an aminoacid that "this" doesn't
-    return Math.abs(inList.totalCount());
+    return inList.totalCount() + this.codonCompare(inList.next);
   }
 
 
@@ -181,8 +209,15 @@ class AminoAcidLL {
    for(int i = 0; i < temp.length; i++){
       ret[i+1] = temp[i];
    }
-
     return ret;
+  }
+
+  public static void printAminoAcidCounts(int[] array){
+
+    for(int i = 0; i < array.length; i++){
+      System.out.print(array[i]);
+    }
+    System.out.println();
   }
 
   /********************************************************************************************/
