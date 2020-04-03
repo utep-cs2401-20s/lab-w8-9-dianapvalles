@@ -113,13 +113,13 @@ class AminoAcidLL {
       return this.totalDiff(inList) + this.next.aminoAcidCompare(inList.next);
     }
 
-    //aminoAcids doesn't match
+    //aminoAcids doesn't match - this has an amino acid that inList doesn't have
     if(this.aminoAcid < inList.aminoAcid){
       return this.totalCount() + this.next.aminoAcidCompare(inList);
     }
 
     //inList has an aminoacid that "this" doesn't
-    return Math.abs(inList.totalCount());
+    return inList.totalCount() + this.next.aminoAcidCompare(inList);
   }
 
   /********************************************************************************************/
@@ -144,14 +144,17 @@ class AminoAcidLL {
   /********************************************************************************************/
   /* Recursively returns the total list of amino acids in the order that they are in in the linked list. */
   public char[] aminoAcidList() {
-
+    //base case
     if (next == null) {
       return new char[]{aminoAcid};
     }
 
+    //recursive call to "append" the aminoacids
     char[] temp = next.aminoAcidList();
+    //array that stores each of the amino acid characters
     char[] ret = new char[temp.length+1];
 
+    //copies temp values in ret
     ret[0] = aminoAcid;
     for(int i = 0; i < temp.length; i++){
       ret[i+1] = temp[i];
@@ -163,27 +166,23 @@ class AminoAcidLL {
   /********************************************************************************************/
   /* Recursively returns the total counts of amino acids in the order that they are in in the linked list. */
   public int[] aminoAcidCounts() {
-
+  //base case
    if(next == null){
       return new int[]{this.totalCount()};
    }
 
+   //recursive call to get the total counts of the specific aminoacid
    int[] temp = next.aminoAcidCounts();
+   //array that stores each of the counts
    int[] ret = new int[temp.length+1];
 
+   //copies temp values in ret
    ret[0] = totalCount();
-
    for(int i = 0; i < temp.length; i++){
       ret[i+1] = temp[i];
    }
 
     return ret;
-  }
-
-  public static void printInt(int[] aminoAcidCounts){
-    for(int i = 0; i < aminoAcidCounts.length; i++){
-      System.out.print(aminoAcidCounts[i] + " ");
-    }
   }
 
   /********************************************************************************************/
@@ -199,19 +198,22 @@ class AminoAcidLL {
     return next.isSorted();
   }
 
-
   /********************************************************************************************/
   /* Static method for generating a linked list from an RNA sequence */
   public static AminoAcidLL createFromRNASequence(String inSequence) {
+    //initializes the head to null
     AminoAcidLL head = null;
 
     for (int i = 0; i < inSequence.length(); i++) {
+      //if the codon encodes a STOP, then we break out of the loop
       if(AminoAcidResources.getAminoAcidFromCodon(inSequence.substring(0,3)) == '*')
         break;
+      //The head is initialized since it is the first iteration
       if (i == 0) {
         head = new AminoAcidLL(inSequence.substring(0, 3));
         inSequence = inSequence.substring(3);
       }
+      //the rest of the nodes are created by separating the string in substring of length 3
       else {
         if(AminoAcidResources.getAminoAcidFromCodon(inSequence.substring(0,3)) == '*')
           break;
@@ -220,10 +222,8 @@ class AminoAcidLL {
         i = 1;
       }
     }
-
     return head;
   }
-
 
   /********************************************************************************************/
   /* sorts a list by amino acid character*/
@@ -270,6 +270,7 @@ class AminoAcidLL {
     AminoAcidLL curNodeA = null;
     AminoAcidLL curNodeB = inList;
 
+    //iterates through the list until the amino acid is less than another amino acid
     while(curNodeB != null && aminoAcid > curNodeB.aminoAcid){
       curNodeA = curNodeB;
       curNodeB = curNodeB.next;
@@ -279,7 +280,7 @@ class AminoAcidLL {
 
 
   /********************************************************************************************/
-  /* helper method to print the array */
+  /* helper method to print the linked list */
   public static void printLinkedList(AminoAcidLL head){
     AminoAcidLL temp = head;
 
