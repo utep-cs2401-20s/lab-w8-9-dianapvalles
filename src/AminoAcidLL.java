@@ -312,6 +312,63 @@ class AminoAcidLL {
     return curNodeA;
   }
 
+  /********************************************************************************************/
+  /* IGNORE --  I tried to implement merge sort */
+  /* sorts a list by amino acid character*/
+  public static AminoAcidLL sort1(AminoAcidLL inList) {
+
+    if(inList == null || inList.next == null)
+      return inList;
+
+    AminoAcidLL middle = getMiddle(inList);
+    AminoAcidLL middleNext = middle.next;
+
+    middle.next = null;
+
+    AminoAcidLL leftSide = sort1(middle);
+    AminoAcidLL rightSide = sort1(middleNext);
+
+    AminoAcidLL head = merge(leftSide,rightSide);
+
+    return head;
+  }
+
+  /* helper method to get the middle node */
+  public static AminoAcidLL getMiddle(AminoAcidLL inList){
+
+    if(inList == null)
+      return inList;
+
+    AminoAcidLL slow = inList;
+    AminoAcidLL fast = inList;
+
+    while(fast.next != null && fast.next.next != null){
+      slow = slow.next;
+      fast = fast.next.next;
+    }
+
+    return slow;
+  }
+
+  public static AminoAcidLL merge(AminoAcidLL left, AminoAcidLL right){
+    AminoAcidLL result = null;
+
+    if(left == null)
+      return right;
+
+    if(right == null)
+      return left;
+
+    if(left.aminoAcid <= right.aminoAcid){
+      result = left;
+      result.next = merge(left.next, right);
+    }
+    else{
+      result = right;
+      result.next = merge(left, right.next);
+    }
+    return result;
+  }
 
   /********************************************************************************************/
   /* helper method to print the linked list */
