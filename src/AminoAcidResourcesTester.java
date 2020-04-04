@@ -58,38 +58,120 @@ class AminoAcidResourcesTester{
     }
   }
 
+  /*
+     * The purpose of this method is to check if the RNA sequence is converted correctly into a linked list by using the aminoAcidList method (also tests its correct implementation)
+     * The string passed has an stop value (the test also check if it stops at the right position)
+     * If the test passes it means that the linked list created the right amino acids and also stopped translating when a codon encoded "STOP"
+     * If the test fails either the linked list was not correct (createRNASequence method), the aminoAcidList method does not work or the STOP was ignored
+     * TEST PASSED
+   */
   @Test
   public void sequence1(){
-    AminoAcidLL head1 = AminoAcidLL.sort(AminoAcidLL.createFromRNASequence("CCGUUCGCACUG"));
-    //ACGGAGCUUCGGAGCGCA
+    AminoAcidLL head = AminoAcidLL.createFromRNASequence("GCUACGGAGCUUCGGAGCUAGAUG");
+    char[] expected = {'A','T','E','L','R','S'};
+    char[] actual = head.aminoAcidList();
 
-    int[] array = head1.aminoAcidCounts();
-
-    AminoAcidLL.printAminoAcidCounts(array);
-
-    AminoAcidLL head = AminoAcidLL.sort(AminoAcidLL.createFromRNASequence("UGGCCC"));
-
-
-
-    int[] array1 = head.aminoAcidCounts();
-
-    System.out.println("COUNTS HEAD1:");
-    for(int i = 0; i < array1.length; i++){
-      System.out.print(array1[i] + " ");
-    }
-    System.out.println();
-
-    AminoAcidLL.printLinkedList(head);
-    AminoAcidLL.printLinkedList(head1);
-
-    assertEquals(6, head.codonCompare(head1));
-
+    assertArrayEquals(expected, actual);
   }
 
+  /*
+     * The purpose of this method is to check if the RNA sequence is sorted correctly by using the aminoAcidList method (also tests its correct implementation)
+     * If the test passes it means that the linked list created the right amino acids and sorted them in the right alphanumeric order
+     * If the test fails either the linked list was not correct (createRNASequence method), the aminoAcidList method does not work or the list was not sorted correctly
+     * TEST PASSED
+   */
   @Test
   public void sequence2() {
-    AminoAcidLL head = AminoAcidLL.createFromRNASequence("CCGAUGAAC");
+    AminoAcidLL head = AminoAcidLL.createFromRNASequence("CGGGUGUCAGAUGCG"); //[R,V,S,D,A]
+    AminoAcidLL sorted = AminoAcidLL.sort(head);
+    char[] expected = {'A','D','R','S','V'};
+    char[] actual = sorted.aminoAcidList();
 
-    assertEquals('P', head.aminoAcid);
+    assertArrayEquals(expected, actual);
   }
+
+  /*
+     * The purpose of this method is to check if the RNA sequence is sorted correctly by using the isSorted method (tests its correct implementation)
+     * If the test passes it means that the linked list created the right amino acids and sorted them in the right alphanumeric order by returning a boolean value (true/false)
+     * If the test fails either the linked list was not correct (createRNASequence method), the list was not sorted correctly or the isSorted method is not working
+     * TEST PASSED
+   */
+  @Test
+  public void sequence3(){
+    AminoAcidLL head = AminoAcidLL.createFromRNASequence("GCUUAUCACUGGCUG"); //[A,T,H,W,L]
+    AminoAcidLL sorted = AminoAcidLL.sort(head);
+
+    assertEquals(true, sorted.isSorted());
+  }
+
+  /*
+   * The purpose of this method is to check if the total amino acid counts (in the order in which they are in the linked list) is correct
+   * If the test passes it means the amino acids who were repeated incremented their counts correctly [some encode the same amino acid]
+   * If the test fails either the private method for the counts[] parameter is wrong or the method aminoAcidCounts is wrong
+   * TEST PASSED
+   */
+  @Test
+  public void sequence4(){
+    AminoAcidLL head = AminoAcidLL.createFromRNASequence("UGUGGUUGCCCAUUUCCCUUACCU"); //[C,G,C,P,F,P,L,P]
+    AminoAcidLL.printLinkedList(head);
+    int[] expected = {2,1,3,1,1};
+    int[] actual = head.aminoAcidCounts();
+
+    assertArrayEquals(expected, actual);
+  }
+
+  /*
+   * The purpose of this method is to check if the aminoAcidCompare returns the expected value (the difference in counts between two lists of amino acids)
+   * If the test passes it means the method to get difference in counts between two [matching] amino acids is correct, the sequences have different length and amino acid counts
+   * If the test fails either the private method totalCount() is wrong or the method aminoAcidCompare() might not be behaving correctly
+   * TEST PASSED
+   */
+  @Test
+  public void sequence5(){
+    AminoAcidLL head = AminoAcidLL.createFromRNASequence("AAGGCUGCACUUUAA"); //[R,A,A,P]
+    AminoAcidLL sorted = AminoAcidLL.sort(head);
+    AminoAcidLL inList = AminoAcidLL.createFromRNASequence("UACGCC"); //[A,T]
+    AminoAcidLL sorted1 = AminoAcidLL.sort(inList);
+    int expected = 4;
+    int actual = sorted.aminoAcidCompare(sorted1);
+
+    assertEquals(expected,actual);
+  }
+
+  /*
+   * The purpose of this method is to check if the codonCompare returns the expected value (based on the difference in counts between two lists of amino acids by the individual codon counts)
+   * If the test passes it means the method to get difference in counts between two [matching] amino acids is correct, the sequences have different length
+   * If the test fails either the private method totalCount(), the codons[] attribute or the method codonCompare() might not be behaving correctly
+   * TEST PASSED
+   */
+  @Test
+  public void sequence6(){
+    AminoAcidLL head = AminoAcidLL.createFromRNASequence("CUGGCACCGUUG"); //[L,A,P,L]
+    AminoAcidLL sorted = AminoAcidLL.sort(head);
+    AminoAcidLL inList = AminoAcidLL.createFromRNASequence("CCCUGG"); //[P,W]
+    AminoAcidLL sorted1 = AminoAcidLL.sort(inList);
+    int expected = 6;
+    int actual = sorted.codonCompare(sorted1);
+
+    assertEquals(expected,actual);
+  }
+
+  /*
+   * The purpose of this method is to combine different methods and see if the result is what we expected (checks for the behavior of the program when multiple things are done to the list)
+   * If the test passes it means the methods involve are behaving correctly [translating, sorting]
+   * The sequence passed will be unsorted, then the method sort() will sort it, then we will call the method aminoAcidCounts to check for the counts when the list is sorted
+   *  If the test fails either the private method for the counts[] parameter is wrong or the method aminoAcidCounts is wrong [considering the list is sorted]
+   * TEST PASSED
+   */
+  @Test
+  public void sequence7(){
+    AminoAcidLL head = AminoAcidLL.createFromRNASequence("UGUUGCCCAUUUCCCUUACCU"); //[C,C,P,F,P,L,P]
+    AminoAcidLL sorted = AminoAcidLL.sort(head);
+    int[] expected = {2,1,1,3};
+    int[] actual = sorted.aminoAcidCounts();
+
+    assertArrayEquals(expected, actual);
+  }
+
+
 }

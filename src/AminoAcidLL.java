@@ -130,7 +130,6 @@ class AminoAcidLL {
       temp = temp.next;
     }
 
-    System.out.println("SUM" + sum);
     return sum;
   }
 
@@ -141,7 +140,7 @@ class AminoAcidLL {
     //both lists are at the end
     if(inList.next == null && this.next == null){
       if(this.aminoAcid == inList.aminoAcid)
-        return this.totalDiff(inList);
+        return this.codonDiff(inList);
 
       return inList.totalCount() + this.totalCount();
     }
